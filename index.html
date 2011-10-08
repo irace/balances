@@ -10,9 +10,23 @@
         appId:'133133700120767', cookie:true,
         status:true, xfbml:true
     });
+
+    FB.api('/me', function(user) {
+        if (user != null) {
+            var image = document.getElementById('image');
+            image.src = 'http://graph.facebook.com/' + user.id + '/picture';
+            var name = document.getElementById('name');
+            name.innerHTML = user.name
+        }
+    });
 </script>
 
 <fb:login-button>Login with Facebook</fb:login-button>
+
+<div align="center">
+           <img id="image"/>
+           <div id="name"></div>
+           </div>
 
 </body>
 </html>
