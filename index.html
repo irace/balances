@@ -1,32 +1,42 @@
 <html>
 <head>
     <title>My Facebook Login Page</title>
-</head>
-<body>
-<div id="fb-root"></div>
-<script src="http://connect.facebook.net/en_US/all.js"></script>
-<script>
-    FB.init({
-        appId:'133133700120767', cookie:true,
-        status:true, xfbml:true
-    });
 
-    FB.api('/me', function(user) {
-        if (user != null) {
-            var image = document.getElementById('image');
-            image.src = 'http://graph.facebook.com/' + user.id + '/picture';
-            var name = document.getElementById('name');
-            name.innerHTML = user.name
-        }
-    });
-</script>
+    <script src="http://connect.facebook.net/en_US/all.js"></script>
+    <script>
+        FB.init({
+            appId: '133133700120767',
+            cookie: true,
+            status: true,
+            xfbml: true
+        });
+
+        FB.api('/me', function(user) {
+            if (user != null) {
+                var image = document.getElementById('image');
+                image.src = 'http://graph.facebook.com/' + user.id + '/picture';
+                var name = document.getElementById('name');
+                name.innerHTML = user.name
+            }
+        });
+
+        FB.Event.subscribe('auth.login', function(response) {
+            alert('User is logged in')
+        });
+    </script>
+</head>
+
+<body>
+
+<div id="fb-root"></div>
 
 <fb:login-button>Login with Facebook</fb:login-button>
 
 <div align="center">
-           <img id="image"/>
-           <div id="name"></div>
-           </div>
+    <img id="image"/>
+
+    <div id="name"></div>
+</div>
 
 </body>
 </html>
