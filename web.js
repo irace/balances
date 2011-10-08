@@ -1,7 +1,7 @@
 var app = require('express').createServer();
 
 app.get('/', function(req, res){
-  res.send('Hello, world!');
+  res.send('Hello, debts!');
 });
 
 var port = process.env.PORT || 3000;
