@@ -1,35 +1,35 @@
-var express = require('express');
-var https = require('https');
+var express = require('express'), https = require('https');
 
 var app = express.createServer();
-app.register('.html', require('ejs')); // Files ending with ".html" should use EJS templating engine
+app.set('view engine', 'ejs');
 app.use(express.cookieParser());
-app.set('view options', {
-    layout: false // Don't use a layout for now
-});
+app.use("/static", express.static(__dirname + '/static'));
 
 app.get('/', function(request, response) {
-    console.log("User requested '/'");
-    var facebookCookie = request.cookies['fbs_133133700120767'];
+    var cookie = request.cookies['fbs_133133700120767'];
 
-    if (facebookCookie) {
+    if (cookie) {
         https.get({
             host: 'graph.facebook.com',
-            path: '/me?' + facebookCookie
+            path: '/me?' + cookie
         }, function(fbResponse) {
             if (fbResponse.statusCode === 200) {
-                response.render(__dirname + '/index.html');
+                response.render(template('index'));
             } else {
-                response.render(__dirname + '/error.html');
+                response.render(template('error'));
             }
         });
     } else {
-        response.render(__dirname + '/login.html');
+        response.render(template('login'));
     }
 });
+
+function template(name) {
+    return __dirname + '/templates/' + name;
+}
 
 var port = process.env.PORT || 3000;
 
 app.listen(port, function() {
-    console.log("Listening on " + port);
+    console.log("Listening on: " + port);
 });

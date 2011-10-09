@@ -1,0 +1,10 @@
+<% title = 'Login' %>
+<fb:login-button>Login with Facebook</fb:login-button>
+
+<script>
+    $(function() {
+        FB.Event.subscribe('auth.login', function(response) {
+            window.location.reload();
+        });
+    });
+</script>
