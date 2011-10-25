@@ -16,8 +16,8 @@ db_client.open(function(err, db) {
     });
 });
 
-function template(name) {
-    return __dirname + '/templates/' + name;
+function view(name) {
+    return __dirname + '/views/' + name;
 }
 
 function lookup_fb_user(cookie, callback) {
@@ -55,7 +55,7 @@ function authorize(request, response, next) {
                 next(); // Pass control to the next route handler
             } else { // No user in the database for the given email address
                 console.log('User is not authorized');
-                response.render(template('error'));
+                response.render(view('error'));
             }
         });
     };
@@ -74,12 +74,12 @@ function authorize(request, response, next) {
                     lookup_db_user_from_session_user_email();
                 } else { // Received an error from the Facebook API request
                     console.log('Unable to retrieve user from Facebook');
-                    response.render(template('error'));
+                    response.render(view('error'));
                 }
             });
         } else { // User does not currently have a Facebook cookie
             console.log('User is not logged in');
-            response.render(template('login'));
+            response.render(view('login'));
         }
     }
 }
@@ -88,7 +88,7 @@ app.get('/', authorize, function(request, response) {
     console.log('DB user ID: ' + request.db_user._id);
     console.log('FB user first name: ' + request.session.fb_user.first_name);
 
-    response.render(template('index'));
+    response.render(view('index'));
 });
 
 var port = process.env.PORT || 3000;
