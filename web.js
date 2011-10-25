@@ -8,10 +8,10 @@ app.use("/static", express.static(__dirname + '/static'));
 app.use(express.cookieParser());
 app.use(express.session({secret: 'secret'}));
 
-var db_server = new mongodb.Server(process.env['DEBTS_MONGODB_HOST'], 10078);
-var db_client = new mongodb.Db(process.env['DEBTS_MONGODB_NAME'], db_server);
+var db_server = new mongodb.Server(process.env.DEBTS_MONGODB_HOST, 10078);
+var db_client = new mongodb.Db(process.env.DEBTS_MONGODB_NAME, db_server);
 db_client.open(function(err, db) {
-    db.authenticate(process.env['DEBTS_MONGODB_USER'], process.env['DEBTS_MONGODB_PASSWORD'], function() {
+    db.authenticate(process.env.DEBTS_MONGODB_USER, process.env.DEBTS_MONGODB_PASSWORD, function() {
         console.log('Connected and authenticated to database');
     });
 });
@@ -48,10 +48,10 @@ function lookup_db_user(email_address, callback) {
 function authorize(request, response, next) {
     var lookup_db_user_from_session_user_email = function() {
         // Find the user in database with the same email address as the Facebook user in the session
-        lookup_db_user(request.session['fb_user'].email, function(db_user) {
+        lookup_db_user(request.session.fb_user.email, function(db_user) {
             if (db_user) {
                 console.log('User is authorized');
-                request['db_user'] = db_user; // Found a user with the email address - store it on the request
+                request.db_user = db_user; // Found a user with the email address - store it on the request
                 next(); // Pass control to the next route handler
             } else { // No user in the database for the given email address
                 console.log('User is not authorized');
@@ -60,16 +60,16 @@ function authorize(request, response, next) {
         });
     };
 
-    if (request.session['fb_user']) { // Facebook user is already stored in the session
+    if (request.session.fb_user) { // Facebook user is already stored in the session
         lookup_db_user_from_session_user_email();
     } else {
-        var cookie = request.cookies['fbs_' + process.env['DEBTS_FACEBOOK_APP_ID']];
+        var cookie = request.cookies['fbs_' + process.env.DEBTS_FACEBOOK_APP_ID];
 
         if (cookie) {
             lookup_fb_user(cookie, function(fb_user) {
                 if (fb_user) {
-                    console.log('User is ' + fb_user['email']);
-                    request.session['fb_user'] = fb_user; // Store Facebook user in the session
+                    console.log('User is ' + fb_user.email);
+                    request.session.fb_user = fb_user; // Store Facebook user in the session
 
                     lookup_db_user_from_session_user_email();
                 } else { // Received an error from the Facebook API request
@@ -85,13 +85,13 @@ function authorize(request, response, next) {
 }
 
 app.get('/', authorize, function(request, response) {
-    console.log('DB user ID: ' + request['db_user']._id);
-    console.log('FB user first name: ' + request.session['fb_user']['first_name']);
+    console.log('DB user ID: ' + request.db_user._id);
+    console.log('FB user first name: ' + request.session.fb_user.first_name);
 
     response.render(template('index'));
 });
 
-var port = process.env['PORT'] || 3000;
+var port = process.env.PORT || 3000;
 
 app.listen(port, function() {
     console.log("Listening on port " + port);
