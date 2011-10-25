@@ -4,7 +4,7 @@ var mongodb = require('mongodb');
 
 var app = express.createServer();
 app.set('view engine', 'ejs');
-app.use("/static", express.static(__dirname + '/static'));
+app.use("/public", express.static(__dirname + '/public'));
 app.use(express.cookieParser());
 app.use(express.session({secret: 'secret'}));
 
