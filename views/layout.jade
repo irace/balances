@@ -1,0 +1,23 @@
+include mixins/common
+
+!!! 5
+html
+  head
+    title Balances
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+
+    mixin style('http://code.jquery.com/mobile/1.0rc1/jquery.mobile-1.0rc1.min.css')
+    mixin script('http://connect.facebook.net/en_US/all.js')
+    mixin script('http://code.jquery.com/jquery-1.6.4.min.js')
+    mixin script('http://code.jquery.com/mobile/1.0rc1/jquery.mobile-1.0rc1.min.js')
+    mixin script('scripts/scripts.js')
+    
+  body
+    div(data-role='page', data-theme='a')
+      div(data-role='header')
+        // Can I override this at the page level? Do I want to use inheritance?
+        h1 Balances
+        a.ui-btn-right(href='#', data-role='button', data-icon='plus') Add
+
+      #fb-root
+      div(data-role='content')!= body

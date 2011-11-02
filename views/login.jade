@@ -1,0 +1,9 @@
+// TODO: Is there a way to do this without using FBML?
+fb:login-button(perms='email') Login with Facebook
+
+script
+    $(function() {
+        FB.Event.subscribe('auth.login', function(response) {
+            window.location = '/';
+        });
+    });

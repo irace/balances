@@ -1,0 +1,15 @@
+ul(data-role='listview')
+  li(data-role='list-divider') Owed
+    // Would be nice to use this for sum of all debts
+    span.ui-li-count= balances.length
+
+  - each balance in balances
+    li
+      // Better way to do this?
+      a(href='/pay/#{balance.counterparty.facebook_id}')
+        h3 #{balance.counterparty.name}
+
+        p.ui-li-aside
+          strong #{balance.amount}
+
+  li(data-role='list-divider') You Owe
