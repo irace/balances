@@ -1,6 +1,5 @@
 var express = require('express')
-  , https = require('https')
-  , Provider = require('./provider.js').Provider;
+  , https = require('https');
 
 var app = express.createServer();
 app.set('view engine', 'jade');
@@ -9,9 +8,7 @@ app.use(express.cookieParser());
 app.use(express.session({secret: 'secret'}));
 app.use(express.static(__dirname + '/public'));
 
-var provider = new Provider(process.env.DEBTS_MONGODB_USER, process.env.DEBTS_MONGODB_PASSWORD,
-    process.env.DEBTS_MONGODB_HOST, 10078, process.env.DEBTS_MONGODB_NAME);
-
+// TODO: Cleanup Facebook API usage
 function lookup_fb_user(cookie, callback) {
     // Request a user object from Facebook's Open Graph API, using the given cookie
     https.get({
@@ -80,6 +77,15 @@ app.get('/', authorize, function(request, response) {
 
 var port = process.env.PORT || 3000;
 
-app.listen(port, function() {
-    console.log("Listening on port " + port);
-});
+var provider;
+
+// TODO: Remove 'MONGO' from environment variable names
+require('./provider.js').connect(process.env.DEBTS_MONGODB_USER, process.env.DEBTS_MONGODB_PASSWORD,
+    process.env.DEBTS_MONGODB_HOST, 10078, process.env.DEBTS_MONGODB_NAME, function(p) {
+        provider = p;
+
+        app.listen(port, function() {
+            console.log("Listening on port " + port);
+        });
+    });
+

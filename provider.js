@@ -3,13 +3,14 @@ var _ = require('underscore')
   , Schema = mongoose.Schema
   , ObjectId = Schema.ObjectId;
 
+// TODO: Possible to make these immutable?
+// TODO: Add default date
 var TransactionSchema = new Schema({
     comment         : { type: String, trim: true }
   , amount          : { type: Number, required: true }
   , from            : { type: ObjectId, ref: 'Person', required: true }
   , to              : { type: ObjectId, ref: 'Person', required: true }
   , date            : Date
-  , offset          : Boolean
 });
 
 var PersonSchema = new Schema({
@@ -65,28 +66,46 @@ PersonSchema.method({
     }
 });
 
-var Transaction;
-var Person;
+// API
 
-var Provider = function(user, password, host, port, db_name) {
-    mongoose.connect('mongodb://' + user + ':' + password + '@' + host + ':' + port + '/' + db_name, function(err) {
-        if (err) {
-            console.log(err);
-        } else {
-            Transaction = mongoose.model('Transaction', TransactionSchema);
-            Person = mongoose.model('Person', PersonSchema);
-        }
-    });
-};
+var Provider = function() {};
 
-function findPersonByFacebookId(id, callback) {
+Provider.prototype.findPersonByFacebookId = function(id, callback) {
     Person.findOne({ facebook_id: id }, function(err, person) {
         callback(person);
     });
-}
+};
 
-Provider.prototype.findPersonByFacebookId = findPersonByFacebookId;
+Provider.prototype.newPerson = function(object) {
+    var person = new Person(object);
+    person.save(function(err) {
+        if (err) {
+            console.log(err);
+        }
+    });
 
-Provider.prototype.newTransaction()
+    return person;
+};
 
-exports.Provider = Provider;
+Provider.prototype.newTransaction = function(object) {
+    var transaction = new Transaction(object);
+    transaction.save(function(err) {
+       if (err) {
+           console.log(err);
+       }
+    });
+
+    return transaction;
+};
+
+var Transaction;
+var Person;
+
+exports.connect = function(user, password, host, port, db_name, callback) {
+    mongoose.connect('mongodb://' + user + ':' + password + '@' + host + ':' + port + '/' + db_name, function(err) {
+        Transaction = mongoose.model('Transaction', TransactionSchema);
+        Person = mongoose.model('Person', PersonSchema);
+
+        callback(new Provider());
+    });
+};
