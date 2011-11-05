@@ -1,6 +1,10 @@
 mixin balance_list(name, balances)
+  - var sum_of_balances = 0;
+  - each balance in balances
+    - sum_of_balances += balance.amount;
+
   li(data-role='list-divider')= name
-    span.ui-li-count= balances.length
+    span.ui-li-count= sum_of_balances
 
   - each balance in balances
     li
@@ -12,13 +16,13 @@ mixin balance_list(name, balances)
           strong #{balance.amount}
 
 - var balances_you_owe = [];
-- var balances_you_are_owed = [];
+- var balances_owed = [];
 - each balance in balances
-  - if (balance.amount > 0)
+  - if (balance.amount < 0)
     - balances_you_owe.push(balance)
   - else
-    - balances_you_are_owed.push(balance)
+    - balances_owed.push(balance)
 
 ul(data-role='listview')
-  mixin balance_list('Owed', balances_you_are_owed)
+  mixin balance_list('Owed', balances_owed)
   mixin balance_list('You Owe', balances_you_owe)
