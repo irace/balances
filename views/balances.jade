@@ -9,7 +9,7 @@ mixin balance_list(name, balances)
   - each balance in balances
     li
       // Better way to do this?
-      a(href='/pay/#{balance.counterparty.facebook_id}')
+      a(href='/person/#{balance.counterparty.facebook_id}')
         img(src='https://graph.facebook.com/#{balance.counterparty.facebook_id}/picture')
         h3 #{balance.counterparty.name}
 
@@ -24,6 +24,11 @@ mixin balance_list(name, balances)
   - else
     - balances_owed.push(balance)
 
-ul(data-role='listview')
-  mixin balance_list('Owed', balances_owed)
-  mixin balance_list('You Owe', balances_you_owe)
+div(data-role='page', data-theme='a')
+  div(data-role='header')
+    h1 Balances
+
+  div(data-role='content')
+    ul(data-role='listview')
+      mixin balance_list('Owed', balances_owed)
+      mixin balance_list('You Owe', balances_you_owe)

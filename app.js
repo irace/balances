@@ -66,10 +66,19 @@ function authorize(request, response, next) {
 
 app.get('/', authorize, function(request, response) {
     request.db_user.getBalances(function(balances) {
-        response.render('index', {
+        response.render('balances', {
             locals: {
-                title: 'Balances',
                 balances: balances
+            }
+        });
+    });
+});
+
+app.get('/person/:id', authorize, function(request, response) {
+    provider.findPersonByFacebookId(request.params.id, function(person) {
+        response.render('person', {
+            locals: {
+                person: person
             }
         });
     });
@@ -79,7 +88,6 @@ var port = process.env.PORT || 3000;
 
 var provider;
 
-// TODO: Remove 'MONGO' from environment variable names
 require('./provider.js').connect(process.env.BALANCES_DB_HOST, process.env.BALANCES_DB_PORT,
     process.env.BALANCES_DB_NAME, process.env.BALANCES_DB_USER, process.env.BALANCES_DB_PASSWORD, function(p) {
         provider = p;
@@ -88,4 +96,3 @@ require('./provider.js').connect(process.env.BALANCES_DB_HOST, process.env.BALAN
             console.log("Listening on port " + port);
         });
     });
-
