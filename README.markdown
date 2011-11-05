@@ -1,1 +1,1 @@
-Debts is an app for keeping track of money you owe and owed to you.
+Balances is an app for keeping track of money you owe and owed to you.
