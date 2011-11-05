@@ -43,7 +43,7 @@ function authorize(request, response, next) {
     if (request.session.fb_user) { // Facebook user is already stored in the session
         lookup_db_user_from_session_user_email();
     } else {
-        var cookie = request.cookies['fbs_' + process.env.DEBTS_FACEBOOK_APP_ID];
+        var cookie = request.cookies['fbs_' + process.env.BALANCES_FACEBOOK_APP_ID];
 
         if (cookie) {
             lookup_fb_user(cookie, function(fb_user) {

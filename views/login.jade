@@ -8,6 +8,5 @@ script
   $(function() {
       FB.Event.subscribe('auth.login', function(response) {
         alert('Got login event');
-        window.location.reload();
       });
   });
