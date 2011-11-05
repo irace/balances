@@ -1,6 +1,5 @@
-ul(data-role='listview')
-  li(data-role='list-divider') Owed
-    // Would be nice to use this for sum of all debts
+mixin balance_list(name, balances)
+  li(data-role='list-divider')= name
     span.ui-li-count= balances.length
 
   - each balance in balances
@@ -12,4 +11,14 @@ ul(data-role='listview')
         p.ui-li-aside
           strong #{balance.amount}
 
-  li(data-role='list-divider') You Owe
+- var balances_you_owe = [];
+- var balances_you_are_owed = [];
+- each balance in balances
+  - if (balance.amount > 0)
+    - balances_you_owe.push(balance)
+  - else
+    - balances_you_are_owed.push(balance)
+
+ul(data-role='listview')
+  mixin balance_list('Owed', balances_you_are_owed)
+  mixin balance_list('You Owe', balances_you_owe)

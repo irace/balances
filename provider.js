@@ -3,6 +3,8 @@ var _ = require('underscore')
   , Schema = mongoose.Schema
   , ObjectId = Schema.ObjectId;
 
+// Schema
+
 // TODO: Possible to make these immutable?
 // TODO: Add default date
 var TransactionSchema = new Schema({
@@ -18,6 +20,16 @@ var PersonSchema = new Schema({
   , facebook_id     : { type: Number, required: true, index: { unique: true } }
 });
 
+//TransactionSchema.method({
+//   valueToPerson: function(person) {
+//       if (person.facebook_id.valueOf() === this.to.facebook_id.valueOf()) {
+//           return this.amount;
+//       } else {
+//           return this.amount * -1;
+//       }
+//   }
+//});
+
 PersonSchema.method({
     getTransactions: function(callback) {
         Transaction
@@ -32,7 +44,7 @@ PersonSchema.method({
         var person = this;
 
         function counterparty(transaction) {
-            if (person.facebook_id === transaction.to.facebook_id) { // This isn't working - Mongoose objects are weird
+            if (person.facebook_id.valueOf() === transaction.to.facebook_id.valueOf()) { // TODO: Implement an 'equals' method
                 return transaction.from;
             } else {
                 return transaction.to;
@@ -43,16 +55,16 @@ PersonSchema.method({
             var balances = _(transactions)
                 .chain()
                 .groupBy(function(transaction) {
-                    return counterparty(transaction);
+                     return counterparty(transaction).facebook_id;
                 })
                 .values()
                 .map(function(transactions) {
                     var amount = _(transactions)
                         .chain()
-                        .pluck('amount')
-                        .reduce(function(transactionAmount1, transactionAmount2) {
-                            return transactionAmount1 + transactionAmount2;
-                        }).value();
+                        //.pluck('amount')
+                        .reduce(function(sum, transaction) {
+                            return sum + valueToPerson(person, transaction);
+                        }, 0).value();
 
                     return {
                         counterparty: counterparty(_.first(transactions)),
@@ -65,6 +77,16 @@ PersonSchema.method({
         })
     }
 });
+
+// Helper functions
+
+function valueToPerson(person, transaction) {
+    if (person.facebook_id.valueOf() === transaction.to.facebook_id.valueOf()) { // TODO: Implement an 'equals' method
+        return transaction.amount * -1;
+    } else {
+        return transaction.amount;
+    }
+}
 
 // API
 
@@ -81,7 +103,9 @@ Provider.prototype.newPerson = function(object) {
     person.save(function(err) {
         if (err) {
             console.log(err);
-        }
+        } else {
+           console.log('Person created: ' + person); // TODO: Implement a 'toString' method
+       }
     });
 
     return person;
@@ -92,6 +116,8 @@ Provider.prototype.newTransaction = function(object) {
     transaction.save(function(err) {
        if (err) {
            console.log(err);
+       } else {
+           console.log('Transaction created: ' + transaction); // TODO: Implement a 'toString' method
        }
     });
 
@@ -101,7 +127,7 @@ Provider.prototype.newTransaction = function(object) {
 var Transaction;
 var Person;
 
-exports.connect = function(user, password, host, port, db_name, callback) {
+exports.connect = function(host, port, db_name, user, password, callback) {
     mongoose.connect('mongodb://' + user + ':' + password + '@' + host + ':' + port + '/' + db_name, function(err) {
         Transaction = mongoose.model('Transaction', TransactionSchema);
         Person = mongoose.model('Person', PersonSchema);

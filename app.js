@@ -80,8 +80,8 @@ var port = process.env.PORT || 3000;
 var provider;
 
 // TODO: Remove 'MONGO' from environment variable names
-require('./provider.js').connect(process.env.DEBTS_MONGODB_USER, process.env.DEBTS_MONGODB_PASSWORD,
-    process.env.DEBTS_MONGODB_HOST, 10078, process.env.DEBTS_MONGODB_NAME, function(p) {
+require('./provider.js').connect(process.env.BALANCES_DB_HOST, process.env.BALANCES_DB_PORT,
+    process.env.BALANCES_DB_NAME, process.env.BALANCES_DB_USER, process.env.BALANCES_DB_PASSWORD, function(p) {
         provider = p;
 
         app.listen(port, function() {
