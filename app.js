@@ -30,7 +30,6 @@ function authorize(request, response, next) {
         // Find the user in database with the same email address as the Facebook user in the session
         provider.findPersonByFacebookId(request.session.fb_user.id, function(db_user) {
             if (db_user) {
-                console.log('User is authorized');
                 request.db_user = db_user; // Found a user with the email address - store it on the request
                 next(); // Pass control to the next route handler
             } else { // No user in the database for the given email address
@@ -76,10 +75,15 @@ app.get('/', authorize, function(request, response) {
 
 app.get('/person/:id', authorize, function(request, response) {
     provider.findPersonByFacebookId(request.params.id, function(person) {
-        response.render('person', {
-            locals: {
-                person: person
-            }
+        request.db_user.getBalanceAndTransactionsWithPerson(person, function(result) {
+            response.render('person', {
+                locals: {
+                    user: request.db_user,
+                    person: person,
+                    balance: result.balance,
+                    transactions: result.transactions
+                }
+            });
         });
     });
 });

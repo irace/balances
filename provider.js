@@ -20,15 +20,15 @@ var PersonSchema = new Schema({
   , facebook_id     : { type: Number, required: true, index: { unique: true } }
 });
 
-//TransactionSchema.method({
-//   valueToPerson: function(person) {
-//       if (person.facebook_id.valueOf() === this.to.facebook_id.valueOf()) {
-//           return this.amount;
-//       } else {
-//           return this.amount * -1;
-//       }
-//   }
-//});
+TransactionSchema.method({
+    valueToPerson: function(person) {
+        if (person.facebook_id.valueOf() === this.to.facebook_id.valueOf()) { // TODO: Implement an 'equals' method
+            return this.amount * -1;
+        } else {
+            return this.amount;
+        }
+    }
+});
 
 PersonSchema.method({
     getTransactions: function(callback) {
@@ -40,11 +40,25 @@ PersonSchema.method({
                 callback(transactions)
             });
     },
+    getBalanceAndTransactionsWithPerson: function(person, callback) {
+        var user = this;
+
+        Transaction
+            .find({ $or: [{ to: person._id, from: user._id }, { to: user._id, from: person._id }]})
+            .populate('to')
+            .populate('from')
+            .run(function(err, transactions) {
+                callback({
+                    transactions: transactions,
+                    balance: balanceForTransactions(transactions, person)
+                })
+            });
+    },
     getBalances: function(callback) {
-        var person = this;
+        var user = this;
 
         function counterparty(transaction) {
-            if (person.facebook_id.valueOf() === transaction.to.facebook_id.valueOf()) { // TODO: Implement an 'equals' method
+            if (user.facebook_id.valueOf() === transaction.to.facebook_id.valueOf()) { // TODO: Implement an 'equals' method
                 return transaction.from;
             } else {
                 return transaction.to;
@@ -59,16 +73,9 @@ PersonSchema.method({
                 })
                 .values()
                 .map(function(transactions) {
-                    var amount = _(transactions)
-                        .chain()
-                        //.pluck('amount')
-                        .reduce(function(sum, transaction) {
-                            return sum + valueToPerson(person, transaction);
-                        }, 0).value();
-
                     return {
                         counterparty: counterparty(_.first(transactions)),
-                        amount: amount
+                        amount: balanceForTransactions(transactions, user)
                     };
                 })
                 .value();
@@ -80,12 +87,12 @@ PersonSchema.method({
 
 // Helper functions
 
-function valueToPerson(person, transaction) {
-    if (person.facebook_id.valueOf() === transaction.to.facebook_id.valueOf()) { // TODO: Implement an 'equals' method
-        return transaction.amount * -1;
-    } else {
-        return transaction.amount;
-    }
+function balanceForTransactions(transactions, person) {
+    return _(transactions)
+        .chain()
+        .reduce(function(sum, transaction) {
+            return sum + transaction.valueToPerson(person);
+        }, 0).value();
 }
 
 // API
