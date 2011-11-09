@@ -1,12 +1,17 @@
-// TODO: Is there a way to do this without using FBML?
-// TODO: Use CSS instead
+div(data-role='page', data-theme='a')
+  div(data-role='header')
+    h1= Balances
 
-center
-  fb:login-button(perms='email') Login with Facebook
+  div(data-role='content')
 
-script
-  $(function() {
-      FB.Event.subscribe('auth.login', function(response) {
-        window.location.reload();
+    // TODO: Is there a way to do this without using FBML?
+    // TODO: Use CSS instead
+    center
+      fb:login-button(perms='email') Login with Facebook
+
+    script
+      $(function() {
+          FB.Event.subscribe('auth.login', function(response) {
+            window.location.reload();
+          });
       });
-  });
