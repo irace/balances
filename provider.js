@@ -50,7 +50,7 @@ PersonSchema.method({
             .run(function(err, transactions) {
                 callback({
                     transactions: transactions,
-                    balance: balanceForTransactions(transactions, person)
+                    balance: balanceForTransactions(transactions, user)
                 })
             });
     },

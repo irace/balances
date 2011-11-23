@@ -8,5 +8,6 @@ div(data-role='page', data-theme='a', data-add-back-btn='true')
       li(data-role='list-divider')= balance
       - each transaction in transactions
         li
-          p= transaction.valueToPerson(user)
+          h3= transaction.valueToPerson(user)
           p= transaction.comment
+          p.ui-li-aside= transaction.date

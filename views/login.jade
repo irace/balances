@@ -1,6 +1,6 @@
 div(data-role='page', data-theme='a')
   div(data-role='header')
-    h1= Balances
+    h1 Balances
 
   div(data-role='content')
 
@@ -11,6 +11,13 @@ div(data-role='page', data-theme='a')
 
     script
       $(function() {
+          FB.init({
+              appId: '133133700120767',
+              cookie: true,
+              status: true,
+              xfbml: true
+          });
+
           FB.Event.subscribe('auth.login', function(response) {
             window.location.reload();
           });
