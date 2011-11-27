@@ -31,6 +31,7 @@ TransactionSchema.method({
 });
 
 PersonSchema.method({
+    // TODO: Sort by date
     getTransactions: function(callback) {
         Transaction
             .find({ $or: [{ to: this._id }, { from: this._id }]})
@@ -98,7 +99,7 @@ function balanceForTransactions(transactions, person) {
 // API
 
 var Provider = function() {};
-
+    
 Provider.prototype.findPersonByFacebookId = function(id, callback) {
     Person.findOne({ facebook_id: id }, function(err, person) {
         callback(person);
@@ -129,6 +130,12 @@ Provider.prototype.newTransaction = function(object) {
     });
 
     return transaction;
+};
+
+Provider.prototype.findAllPersons = function(callback) {
+    Person.find({}, function(err, persons) {
+        callback(persons);
+    });
 };
 
 var Transaction;

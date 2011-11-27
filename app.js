@@ -1,5 +1,6 @@
-var express = require('express')
-  , Authenticator = require('./auth.js').Authenticator;
+var express         = require('express')
+  , Authenticator   = require('./auth.js').Authenticator
+  , _               = require('underscore');
 
 var app = express.createServer();
 
@@ -7,6 +8,7 @@ app.configure(function() {
     app.set('view engine', 'jade');
     app.set('views', __dirname + '/views');
     app.use(express.cookieParser());
+    app.use(express.bodyParser());
     app.use(express.session({secret: 'secret'}));
     app.use(express.static(__dirname + '/public'));
 });
@@ -50,23 +52,55 @@ app.get('/person/:id', authorize, function(request, response) {
     });
 });
 
-// Middleware function for retrieving user object from cookie
-function authorize(request, response, next) {
-    if (!authenticator.isAuthenticated(request)) {
-        response.render('login');
-        return;
+app.get('/person/:id/add', authorize, function(request, response) {
+    provider.findAllPersons(function(persons) {
+        response.render('add', {
+            locals : {
+                person_options: _(persons).filter(function(person) {
+                    return person.facebook_id.valueOf() !== request.user.facebook_id.valueOf()
+                }),
+                selected_person_id: parseInt(request.params.id)
+            }
+        });
+    });
+});
+
+// TODO: Add API point to allow for adding balance without specifying a user first
+
+app.post('/add', authorize, function(request, response) {
+    var createTransactionWithPersonWithFacebookId = function(facebook_id) {
+        provider.findPersonByFacebookId(facebook_id, function(person) {
+            provider.newTransaction({
+                amount: request.body.amount,
+                from: request.user._id,
+                to: person._id,
+                comment: request.body.comments
+            });
+        });
+    };
+
+    if (_(request.body.person).isArray()) {
+        _(request.body.person).each(createTransactionWithPersonWithFacebookId);
+    } else {
+        createTransactionWithPersonWithFacebookId(request.body.person);
     }
 
-    authenticator.authorize(request, function(err) {
+    response.redirect('home');
+});
+
+function authorize(request, response, next) {
+    if (!authenticator.isAuthenticated(request)) {
+        return response.render('login');
+    }
+
+    return authenticator.authorize(request, function(err) {
         if (err) {
-            response.render('error', {
+            return response.render('error', {
                 error: err
             });
-
-            return;
         }
 
-        next();
+        return next();
     });
 }
 

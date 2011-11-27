@@ -1,0 +1,33 @@
+div(data-role='page', data-theme='a', id='dialog')
+
+  div(data-role='header', data-theme='a')
+    h1 Add Balance
+
+  div(data-role='content', data-theme='a')
+
+    // TODO: Input validation
+    form(action='/add', method='post', data-transition='slidedown')
+
+      div(data-role='fieldcontain')
+        fieldset(data-role='controlgroup')
+          legend Person:
+          - for person in person_options
+            // TODO: Cleaner way of doing this?
+            - if (person.facebook_id.valueOf() === selected_person_id.valueOf())
+              input(type='checkbox', name='person', id='#{person.facebook_id}', value='#{person.facebook_id}', checked)
+            - else
+              input(type='checkbox', name='person', id='#{person.facebook_id}', value='#{person.facebook_id}')
+            label(for='#{person.facebook_id}')= person.name
+
+      div(data-role='fieldcontain')
+        label(for='amount') Amount:
+        input(type='number', name='amount', id='amount')
+
+      div(data-role='fieldcontain')
+        label(for='comments') Comments:
+        textarea(name='comments', id='comments')
+
+      button(type='submit') Add
+
+  // TODO: Why is footer not rounded?
+  div(data-role='footer', data-theme='a')

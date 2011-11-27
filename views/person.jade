@@ -1,7 +1,8 @@
 div(data-role='page', data-theme='a', data-add-back-btn='true')
-  div(data-role='header')
+  div(data-role='header', data-theme='a')
     h1= person.name
-      a.ui-btn-right(href='#', data-role='button', data-icon='plus') Add
+      a.ui-btn-right(href='/person/#{person.facebook_id}/add', data-role='button', data-icon='plus', data-rel='dialog',
+      data-transition='slideup') Add
 
   div(data-role='content')
     ul(data-role='listview')
