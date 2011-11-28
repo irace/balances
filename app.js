@@ -53,12 +53,10 @@ app.get('/person/:id', authorize, function(request, response) {
 });
 
 app.get('/person/:id/add', authorize, function(request, response) {
-    provider.findAllPersons(function(persons) {
+    getPersonOptions(request.user.facebook_id, function(person_options) {
         response.render('add', {
             locals : {
-                person_options: _(persons).filter(function(person) {
-                    return person.facebook_id.valueOf() !== request.user.facebook_id.valueOf()
-                }),
+                person_options: person_options,
                 selected_person_id: parseInt(request.params.id)
             }
         });
@@ -66,6 +64,26 @@ app.get('/person/:id/add', authorize, function(request, response) {
 });
 
 // TODO: Add API point to allow for adding balance without specifying a user first
+
+app.get('/add', authorize, function(request, response) {
+    getPersonOptions(request.user.facebook_id, function(person_options) {
+        response.render('add', {
+            locals : {
+                person_options: person_options
+            }
+        });
+    });
+});
+
+function getPersonOptions(user_facebook_id, callback) {
+    provider.findAllPersons(function(persons) {
+        var filtered_persons = _(persons).filter(function(person) {
+            return person.facebook_id.valueOf() !== user_facebook_id.valueOf()
+        });
+
+        callback(filtered_persons);
+    });
+}
 
 app.post('/add', authorize, function(request, response) {
     var createTransactionWithPersonWithFacebookId = function(facebook_id) {
