@@ -1,0 +1,23 @@
+div(data-role='page', data-theme='a', data-add-back-btn='true')
+  div(data-role='header', data-theme='a', data-position='fixed')
+    h1 Edit
+
+  div(data-role='content', data-theme='a')
+    dl
+      dt From
+      dd #{transaction.from}
+
+      dt To
+      dd #{transaction.to}
+
+      dt Comment
+      dd #{transaction.comment}
+
+      dt Date
+      dd #{transaction.date}
+
+      dt Amount
+      dd #{transaction.amount}
+
+    a(href='/markaspaid/#{transaction._id}', data-role='button', data-icon='check') Mark as Paid
+    a(href='/markaspaid/#{transaction._id}', data-role='button', data-icon='delete') Delete

@@ -1,6 +1,7 @@
 var express         = require('express')
   , Authenticator   = require('./auth.js').Authenticator
-  , _               = require('underscore');
+  , _               = require('underscore')
+  , dateFormat      = require('dateformat');
 
 // Setup
 
@@ -108,9 +109,20 @@ app.post('/add', authorize, function(request, response) {
     response.redirect('home');
 });
 
+app.get('/edit/:id', authorize, function(request, response) {
+    provider.findTransactionById(request.params.id, function(transaction) {
+        response.render('edit', {
+            locals: {
+                transaction: transaction
+            }
+        })
+    });
+});
+
 // View helpers
 
 app.helpers({
+    dateFormat: dateFormat
 });
 
 // Middleware
@@ -123,7 +135,9 @@ function authorize(request, response, next) {
     return authenticator.authorize(request, function(err) {
         if (err) {
             return response.render('error', {
-                error: err
+                locals: {
+                    error: err
+                }
             });
         }
 

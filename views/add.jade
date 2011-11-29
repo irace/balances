@@ -1,22 +1,20 @@
 div(data-role='page', data-theme='a')
   div(data-role='header', data-theme='a', data-position='fixed')
     a(data-rel='back', href='#', data-icon='delete') Cancel
-    h1 Add Balance
+    h1 Add
 
   div(data-role='content', data-theme='a')
 
     // TODO: Input validation
     form(action='/add', method='post', data-transition='slidedown')
 
-      div(data-role='fieldcontain')
-        legend Person:
-        - for person in person_options
-          - if (typeof(selected_person_id) != 'undefined' && person.facebook_id.valueOf() === selected_person_id.valueOf())
-            input(type='checkbox', name='person', id='#{person.facebook_id}', value='#{person.facebook_id}', checked)
-          - else
-            input(type='checkbox', name='person', id='#{person.facebook_id}', value='#{person.facebook_id}')
-          label(for='#{person.facebook_id}')= person.name
-
+      legend Person:
+      - for person in person_options
+        - if (typeof(selected_person_id) != 'undefined' && person.facebook_id.valueOf() === selected_person_id.valueOf())
+          input(type='checkbox', name='person', id='#{person.facebook_id}', value='#{person.facebook_id}', checked)
+        - else
+          input(type='checkbox', name='person', id='#{person.facebook_id}', value='#{person.facebook_id}')
+        label(for='#{person.facebook_id}')= person.name
 
       label(for='amount') Amount:
       input(type='number', name='amount', id='amount')
@@ -25,6 +23,3 @@ div(data-role='page', data-theme='a')
       textarea(name='comments', id='comments')
 
       button(type='submit') Add
-
-  div(data-role='footer', data-theme='a', data-position='fixed')
-    &nbsp;

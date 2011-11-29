@@ -12,7 +12,7 @@ var TransactionSchema = new Schema({
   , amount          : { type: Number, required: true }
   , from            : { type: ObjectId, ref: 'Person', required: true }
   , to              : { type: ObjectId, ref: 'Person', required: true }
-  , date            : Date
+  , date            : { type: Date, default: Date.now }
 });
 
 var PersonSchema = new Schema({
@@ -31,11 +31,11 @@ TransactionSchema.method({
 });
 
 PersonSchema.method({
-    // TODO: Sort by date
     getTransactions: function(callback) {
         Transaction
             .find({ $or: [{ to: this._id }, { from: this._id }]})
-            .populate('to')
+            .sort('date', 'descending')
+            .populate('to') // TODO: Is this actually doing anything?
             .populate('from')
             .run(function(err, transactions) {
                 callback(transactions)
@@ -46,6 +46,7 @@ PersonSchema.method({
 
         Transaction
             .find({ $or: [{ to: person._id, from: user._id }, { to: user._id, from: person._id }]})
+            .sort('date', 'descending')
             .populate('to')
             .populate('from')
             .run(function(err, transactions) {
@@ -135,6 +136,12 @@ Provider.prototype.newTransaction = function(object) {
 Provider.prototype.findAllPersons = function(callback) {
     Person.find({}, function(err, persons) {
         callback(persons);
+    });
+};
+
+Provider.prototype.findTransactionById = function(transaction_id, callback) {
+    Transaction.findById(transaction_id, function(err, transaction) {
+        callback(transaction);
     });
 };
 

@@ -14,10 +14,11 @@ div(data-role='page', data-theme='a', data-add-back-btn='true')
         
       - each transaction in transactions
         li
-          h3
-            mixin balance(transaction.valueToPerson(user))
-          p= transaction.comment
-          p.ui-li-aside= transaction.date
+          a(href='/edit/#{transaction._id}')
+            h3
+              mixin balance(transaction.valueToPerson(user))
+            p= transaction.comment
+            p.ui-li-aside= dateFormat(transaction.date, 'mm/dd/yyyy h:MM TT')
 
   div(data-role='footer', data-theme='a', data-position='fixed')
     &nbsp;
