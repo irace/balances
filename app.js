@@ -2,6 +2,8 @@ var express         = require('express')
   , Authenticator   = require('./auth.js').Authenticator
   , _               = require('underscore');
 
+// Setup
+
 var app = express.createServer();
 
 app.configure(function() {
@@ -26,6 +28,8 @@ app.configure('production', function() {
     var FacebookGraph = require('./graph.js').FacebookGraph;
     graph = new FacebookGraph();
 });
+
+// Routing
 
 app.get('/', authorize, function(request, response) {
     request.user.getBalances(function(balances) {
@@ -62,8 +66,6 @@ app.get('/person/:id/add', authorize, function(request, response) {
         });
     });
 });
-
-// TODO: Add API point to allow for adding balance without specifying a user first
 
 app.get('/add', authorize, function(request, response) {
     getPersonOptions(request.user.facebook_id, function(person_options) {
@@ -106,6 +108,13 @@ app.post('/add', authorize, function(request, response) {
     response.redirect('home');
 });
 
+// View helpers
+
+app.helpers({
+});
+
+// Middleware
+
 function authorize(request, response, next) {
     if (!authenticator.isAuthenticated(request)) {
         return response.render('login');
@@ -121,6 +130,8 @@ function authorize(request, response, next) {
         return next();
     });
 }
+
+// Startup
 
 var port = process.env.PORT || 3000;
 

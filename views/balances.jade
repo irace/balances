@@ -1,20 +1,23 @@
+include mixins
+
 mixin balance_list(name, balances)
   - var sum_of_balances = 0;
   - each balance in balances
     - sum_of_balances += balance.amount;
 
   li(data-role='list-divider')= name
-    span.ui-li-count= sum_of_balances
+    span.ui-li-count
+      mixin balance(sum_of_balances)
 
   - each balance in balances
     li
-      // Better way to do this?
       a(href='/person/#{balance.counterparty.facebook_id}')
         img(src='https://graph.facebook.com/#{balance.counterparty.facebook_id}/picture')
         h3 #{balance.counterparty.name}
 
         p.ui-li-aside
-          #{balance.amount}
+          mixin balance(balance.amount)
+
 
 - var balances_you_owe = [];
 - var balances_owed = [];
@@ -30,6 +33,6 @@ div(data-role='page', data-theme='a', data-url='/')
       a.ui-btn-right(href='/add', data-role='button', data-icon='plus', data-transition='slideup') Add
 
   div(data-role='content')
-    ul(data-role='listview')
+    ul.balances(data-role='listview')
       mixin balance_list('Owed', balances_owed)
       mixin balance_list('You Owe', balances_you_owe)

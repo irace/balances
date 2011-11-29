@@ -1,0 +1,12 @@
+ul.balances p.ui-li-aside {
+    font-size: 1.5em;
+    margin-right: 0.5em;
+}
+
+.owed {
+    color: green;
+}
+
+.you_owe {
+    color: #b12424;
+}

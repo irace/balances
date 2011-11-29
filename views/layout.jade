@@ -1,4 +1,4 @@
-include mixins/common
+include mixins
 
 !!! 5
 html
@@ -9,10 +9,12 @@ html
     meta(name='apple-mobile-web-app-status-bar-style', content='black')
 
     mixin style('http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css')
+    mixin style('styles.css')
+
     mixin script('http://connect.facebook.net/en_US/all.js')
     mixin script('http://code.jquery.com/jquery-1.6.4.min.js')
     mixin script('http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js')
-    mixin script('scripts/scripts.js')
+    mixin script('scripts.js')
     
   body
     #fb-root

@@ -1,0 +1,11 @@
+mixin script(src)
+  script(src=src)
+
+mixin style(src)
+  link(rel='stylesheet', href=src)
+
+mixin balance(amount)
+  - if (amount >= 0)
+    span.owed= '$' + amount
+  - else
+    span.you_owe= amount.toString().replace('-', '-$')

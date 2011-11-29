@@ -1,3 +1,5 @@
+include mixins
+
 div(data-role='page', data-theme='a', data-add-back-btn='true')
   div(data-role='header', data-theme='a')
     h1= person.name
@@ -6,9 +8,14 @@ div(data-role='page', data-theme='a', data-add-back-btn='true')
 
   div(data-role='content')
     ul(data-role='listview')
-      li(data-role='list-divider')= balance
+      li(data-role='list-divider') Balance
+        span.ui-li-count
+          mixin balance(balance)
+        
       - each transaction in transactions
         li
-          h3= transaction.valueToPerson(user)
+          h3
+            mixin balance(transaction.valueToPerson(user))
           p= transaction.comment
           p.ui-li-aside= transaction.date
+
