@@ -28,7 +28,7 @@ mixin balance_list(name, balances)
     - balances_owed.push(balance)
 
 div(data-role='page', data-theme='a', data-url='/')
-  div(data-role='header', data-theme='a')
+  div(data-role='header', data-theme='a', data-position='fixed')
     h1 Balances
       a.ui-btn-right(href='/add', data-role='button', data-icon='plus', data-transition='slideup') Add
 
@@ -36,3 +36,6 @@ div(data-role='page', data-theme='a', data-url='/')
     ul.balances(data-role='listview')
       mixin balance_list('Owed', balances_owed)
       mixin balance_list('You Owe', balances_you_owe)
+
+  div(data-role='footer', data-theme='a', data-position='fixed')
+    &nbsp;

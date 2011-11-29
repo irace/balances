@@ -1,7 +1,7 @@
 include mixins
 
 div(data-role='page', data-theme='a', data-add-back-btn='true')
-  div(data-role='header', data-theme='a')
+  div(data-role='header', data-theme='a', data-position='fixed')
     h1= person.name
       a.ui-btn-right(href='/person/#{person.facebook_id}/add', data-role='button', data-icon='plus',
       data-transition='slideup') Add
@@ -17,5 +17,10 @@ div(data-role='page', data-theme='a', data-add-back-btn='true')
           h3
             mixin balance(transaction.valueToPerson(user))
           p= transaction.comment
-          p.ui-li-aside= transaction.date
+          p.ui-li-aside
+            mixin balance(transaction.valueToPerson(user))
+          p.ui-li-aside
+            Hi
 
+  div(data-role='footer', data-theme='a', data-position='fixed')
+    &nbsp;
