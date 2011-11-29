@@ -12,7 +12,6 @@ mixin balance_list(name, balances)
   - each balance in balances
     li
       a(href='/person/#{balance.counterparty.facebook_id}')
-        img(src='https://graph.facebook.com/#{balance.counterparty.facebook_id}/picture')
         h3 #{balance.counterparty.name}
 
         p.ui-li-aside
