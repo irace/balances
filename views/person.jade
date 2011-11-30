@@ -1,5 +1,12 @@
 include mixins
 
+mixin transaction_row(transaction)
+  a(href='/edit/#{transaction._id}')
+    h3
+      mixin balance(transaction.valueToPerson(currentUser))
+    p= transaction.comment
+    p.ui-li-aside= dateFormat(transaction.date, 'mm/dd/yyyy h:MM TT')
+
 div(data-role='page', data-theme='a', data-add-back-btn='true')
   div(data-role='header', data-theme='a', data-position='fixed')
     h1= person.name
@@ -11,14 +18,24 @@ div(data-role='page', data-theme='a', data-add-back-btn='true')
       li(data-role='list-divider') Balance
         span.ui-li-count
           mixin balance(balance)
-        
-      - each transaction in transactions
-        li
-          a(href='/edit/#{transaction._id}')
-            h3
-              mixin balance(transaction.valueToPerson(user))
-            p= transaction.comment
-            p.ui-li-aside= dateFormat(transaction.date, 'mm/dd/yyyy h:MM TT')
+
+      each transaction in transactions
+        if transaction.paid
+          li.paid
+            mixin transaction_row(transaction)
+        else
+          li.unpaid
+            mixin transaction_row(transaction)
 
   div(data-role='footer', data-theme='a', data-position='fixed')
-    &nbsp;
+    div(data-role='navbar')
+      ul
+        li
+          a#unpaid.ui-btn-active(href='', data-icon='alert') Unpaid
+        li
+          a#paid(href='', data-icon='check') Paid
+
+  script
+    $(function() {
+      $('li.paid').hide();
+    });

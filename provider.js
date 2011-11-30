@@ -6,13 +6,13 @@ var _ = require('underscore')
 // Schema
 
 // TODO: Possible to make these immutable?
-// TODO: Add default date
 var TransactionSchema = new Schema({
-    comment         : { type: String, trim: true }
+    comment         : { type: String, required: true, trim: true }
   , amount          : { type: Number, required: true }
   , from            : { type: ObjectId, ref: 'Person', required: true }
   , to              : { type: ObjectId, ref: 'Person', required: true }
   , date            : { type: Date, default: Date.now }
+  , paid            : { type: Boolean, default: false }
 });
 
 var PersonSchema = new Schema({
@@ -21,11 +21,21 @@ var PersonSchema = new Schema({
 });
 
 TransactionSchema.method({
+    isCreatedByPerson: function(person) {
+        return person.facebook_id.valueOf() === this.from.facebook_id.valueOf(); // TODO: Implement an 'equals' method
+    },
     valueToPerson: function(person) {
-        if (person.facebook_id.valueOf() === this.to.facebook_id.valueOf()) { // TODO: Implement an 'equals' method
-            return this.amount * -1;
-        } else {
+        if (this.isCreatedByPerson(person)) {
             return this.amount;
+        } else {
+            return this.amount * -1;
+        }
+    },
+    counterparty: function(person) {
+        if (!this.isCreatedByPerson(person)) {
+            return this.from;
+        } else {
+            return this.to;
         }
     }
 });
@@ -35,7 +45,7 @@ PersonSchema.method({
         Transaction
             .find({ $or: [{ to: this._id }, { from: this._id }]})
             .sort('date', 'descending')
-            .populate('to') // TODO: Is this actually doing anything?
+            .populate('to')
             .populate('from')
             .run(function(err, transactions) {
                 callback(transactions)
@@ -59,24 +69,16 @@ PersonSchema.method({
     getBalances: function(callback) {
         var user = this;
 
-        function counterparty(transaction) {
-            if (user.facebook_id.valueOf() === transaction.to.facebook_id.valueOf()) { // TODO: Implement an 'equals' method
-                return transaction.from;
-            } else {
-                return transaction.to;
-            }
-        }
-
         this.getTransactions(function(transactions) {
             var balances = _(transactions)
                 .chain()
                 .groupBy(function(transaction) {
-                     return counterparty(transaction).facebook_id;
+                     return transaction.counterparty(user).facebook_id;
                 })
                 .values()
                 .map(function(transactions) {
                     return {
-                        counterparty: counterparty(_.first(transactions)),
+                        counterparty: _.first(transactions).counterparty(user),
                         amount: balanceForTransactions(transactions, user)
                     };
                 })
@@ -92,9 +94,12 @@ PersonSchema.method({
 function balanceForTransactions(transactions, person) {
     return _(transactions)
         .chain()
-        .reduce(function(sum, transaction) {
+        .filter(function(transaction) {
+            return !transaction.get('paid');
+        }).reduce(function(sum, transaction) {
             return sum + transaction.valueToPerson(person);
-        }, 0).value();
+        }, 0)
+        .value();
 }
 
 // API
@@ -140,8 +145,27 @@ Provider.prototype.findAllPersons = function(callback) {
 };
 
 Provider.prototype.findTransactionById = function(transaction_id, callback) {
+    Transaction
+        .findById(transaction_id)
+        .populate('to')
+        .populate('from')
+        .run(function(err, transaction) {
+            callback(transaction);
+        });
+};
+
+Provider.prototype.payTransactionById = function(transaction_id, callback) {
     Transaction.findById(transaction_id, function(err, transaction) {
-        callback(transaction);
+        transaction.set('paid', true);
+        transaction.save();
+        callback();
+    });
+};
+
+Provider.prototype.deleteTransactionById = function(transaction_id, callback) {
+    Transaction.findById(transaction_id, function(err, transaction) {
+        transaction.remove();
+        callback();
     });
 };
 

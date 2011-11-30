@@ -1,26 +1,23 @@
+include mixins
+
 div(data-role='page', data-theme='a', data-add-back-btn='true')
   div(data-role='header', data-theme='a', data-position='fixed')
-    h1 Edit
+    h1= transaction.comment
 
-  div(data-role='content', data-theme='a')
-    dl
-      dt From
-      dd #{transaction.from}
+  - var valueToCurrentUser = transaction.valueToPerson(currentUser)
 
-      dt To
-      dd #{transaction.to}
+  div.edit(data-role='content', data-theme='a')
+    p
+      mixin balance(valueToCurrentUser)
 
-      dt Comment
-      dd #{transaction.comment}
+    - var counterparty = transaction.counterparty(currentUser)
+    - var formattedDate = dateFormat(transaction.date, 'mm/dd/yyyy h:MM TT')
+    
+    if transaction.valueToPerson(currentUser) > 0
+      p Owed to you by #{counterparty.name} (#{formattedDate})
+    else
+      p Owed to #{counterparty.name} (#{formattedDate})
 
-      dt Date
-      dd #{transaction.date}
-
-      dt Amount
-      dd #{transaction.amount}
-
-    a(href='/markaspaid/#{transaction._id}', data-role='button', data-icon='check') Mark as Paid
-    a(href='/markaspaid/#{transaction._id}', data-role='button', data-icon='delete') Delete
-
-  div(data-role='footer', data-theme='a', data-position='fixed')
-    &nbsp;
+    if !transaction.paid && valueToCurrentUser > 0
+      a(href='/pay/#{transaction._id}', data-role='button', data-icon='check', data-direction='reverse') Mark as Paid
+      a(href='/delete/#{transaction._id}', data-role='button', data-icon='delete', data-direction='reverse') Delete

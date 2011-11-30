@@ -9,10 +9,10 @@ div(data-role='page', data-theme='a')
     form(action='/add', method='post', data-transition='slidedown')
 
       legend Person:
-      - for person in person_options
-        - if (typeof(selected_person_id) != 'undefined' && person.facebook_id.valueOf() === selected_person_id.valueOf())
+      for person in person_options
+        if typeof(selected_person_id) != 'undefined' && person.facebook_id.valueOf() === selected_person_id.valueOf()
           input(type='checkbox', name='person', id='#{person.facebook_id}', value='#{person.facebook_id}', checked)
-        - else
+        else
           input(type='checkbox', name='person', id='#{person.facebook_id}', value='#{person.facebook_id}')
         label(for='#{person.facebook_id}')= person.name
 

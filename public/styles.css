@@ -2,15 +2,23 @@ body {
     background-color: black;
 }
 
-ul.balances p.ui-li-aside {
+ul.balances p.ui-li-aside .balance,
+div.edit .balance {
     font-size: 1.5em;
+}
+
+ul.balances p.ui-li-aside {
     margin-right: 0.5em;
 }
 
-.owed {
+.balance.owed {
     color: #3cab3c;
 }
 
-.you_owe {
+.balance.you_owe {
     color: #d76060;
+}
+
+div.edit p {
+    text-align: center;
 }

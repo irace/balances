@@ -5,15 +5,16 @@ var express         = require('express')
 
 // Setup
 
-var app = express.createServer();
+var app = express.createServer(
+    express.cookieParser()
+  , express.bodyParser()
+  , express.session({secret: 'secret'})
+  , express.static(__dirname + '/public')
+);
 
 app.configure(function() {
     app.set('view engine', 'jade');
     app.set('views', __dirname + '/views');
-    app.use(express.cookieParser());
-    app.use(express.bodyParser());
-    app.use(express.session({secret: 'secret'}));
-    app.use(express.static(__dirname + '/public'));
 });
 
 var graph;
@@ -47,7 +48,6 @@ app.get('/person/:id', authorize, function(request, response) {
         request.user.getBalanceAndTransactionsWithPerson(person, function(result) {
             response.render('person', {
                 locals: {
-                    user: request.user,
                     person: person,
                     balance: result.balance,
                     transactions: result.transactions
@@ -106,7 +106,7 @@ app.post('/add', authorize, function(request, response) {
         createTransactionWithPersonWithFacebookId(request.body.person);
     }
 
-    response.redirect('home');
+    response.redirect('/');
 });
 
 app.get('/edit/:id', authorize, function(request, response) {
@@ -119,13 +119,35 @@ app.get('/edit/:id', authorize, function(request, response) {
     });
 });
 
+app.get('/delete/:id', authorize, function(request, response) {
+    // TODO: Only person owed money can delete
+
+    provider.deleteTransactionById(request.params.id, function() {
+        response.redirect('/');
+    });
+});
+
+app.get('/pay/:id', authorize, function(request, response) {
+    // TODO: Only person owed money can mark as paid
+
+    provider.payTransactionById(request.params.id, function() {
+        response.redirect('/');
+    });
+});
+
 // View helpers
 
 app.helpers({
     dateFormat: dateFormat
 });
 
-// Middleware
+app.dynamicHelpers({
+    currentUser: function(request, response) {
+        return request.user;
+    }
+});
+
+// Middleware functions
 
 function authorize(request, response, next) {
     if (!authenticator.isAuthenticated(request)) {
