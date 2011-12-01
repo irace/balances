@@ -19,7 +19,7 @@ Authenticator.prototype.authorize = function(request, callback) {
                 callback(null);
 
             } else {
-                callback({ message: 'You are not authorized to use this application.' });
+                callback('You are not authorized to use this application.');
             }
         });
     });

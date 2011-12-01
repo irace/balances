@@ -154,19 +154,15 @@ Provider.prototype.findTransactionById = function(transaction_id, callback) {
         });
 };
 
-Provider.prototype.payTransactionById = function(transaction_id, callback) {
-    Transaction.findById(transaction_id, function(err, transaction) {
-        transaction.set('paid', true);
-        transaction.save();
-        callback();
-    });
+Provider.prototype.payTransaction = function(transaction, callback) {
+    transaction.set('paid', true);
+    transaction.save();
+    callback();
 };
 
-Provider.prototype.deleteTransactionById = function(transaction_id, callback) {
-    Transaction.findById(transaction_id, function(err, transaction) {
-        transaction.remove();
-        callback();
-    });
+Provider.prototype.deleteTransaction = function(transaction, callback) {
+    transaction.remove();
+    callback();
 };
 
 var Transaction;
