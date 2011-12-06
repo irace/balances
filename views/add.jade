@@ -4,9 +4,7 @@ div(data-role='page', data-theme='a')
     h1 Add
 
   div(data-role='content', data-theme='a')
-
-    // TODO: Input validation
-    form(action='/add', method='post', data-transition='slidedown')
+    form#add_form(action='/add', method='post', data-transition='slidedown')
 
       legend Person:
       for person in person_options
@@ -23,3 +21,23 @@ div(data-role='page', data-theme='a')
       textarea(name='comments', id='comments')
 
       button(type='submit') Add
+
+    script
+      $("#add_form").validate({
+        rules : {
+          person: "required",
+          amount: {
+            required: true,
+            number: true
+          },
+          comments: "required"
+        },
+        submitHandler: function(form) {
+          $.mobile.changePage('/add', {
+            transition: 'slide',
+            reverse: true,
+            type: 'post',
+            data: $(form).serialize()
+          });
+        }
+      });

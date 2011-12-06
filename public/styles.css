@@ -22,3 +22,7 @@ ul.balances p.ui-li-aside {
 div.edit p {
     text-align: center;
 }
+
+label.error {
+    color: #d76060;
+}

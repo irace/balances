@@ -120,20 +120,36 @@ app.get('/edit/:id', authorize, function(request, response) {
 });
 
 app.get('/delete/:id', authorize, function(request, response) {
-    // TODO: Only person owed money can delete
-
-    provider.deleteTransactionById(request.params.id, function() {
-        response.redirect('/');
+    provider.findTransactionById(request.params.id, function(transaction) {
+        if (transaction.valueToPerson(request.user) > 0) {
+            provider.deleteTransaction(transaction, function() {
+                response.redirect('/');
+            });
+        } else {
+            errorResponse(response, 'You are not authorized to delete this transaction.');
+        }
     });
 });
 
 app.get('/pay/:id', authorize, function(request, response) {
-    // TODO: Only person owed money can mark as paid
-
-    provider.payTransactionById(request.params.id, function() {
-        response.redirect('/');
+    provider.findTransactionById(request.params.id, function(transaction) {
+        if (transaction.valueToPerson(request.user) > 0) {
+            provider.payTransaction(transaction, function() {
+                response.redirect('/');
+            });
+        } else {
+            errorResponse(response, 'You are not authorized to mark this transaction as paid.');
+        }
     });
 });
+
+function errorResponse(response, message) {
+    response.render('error', {
+        locals : {
+            error: message
+        }
+    });
+}
 
 // View helpers
 
@@ -156,11 +172,7 @@ function authorize(request, response, next) {
 
     return authenticator.authorize(request, function(err) {
         if (err) {
-            return response.render('error', {
-                locals: {
-                    error: err
-                }
-            });
+            return errorResponse(response, err);
         }
 
         return next();

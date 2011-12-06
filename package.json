@@ -4,7 +4,7 @@
   "dependencies": {
     "express": "2.4.7",
     "jade": "0.16.4",    
-    "mongoose": "2.3.8",
+    "mongoose": "2.4.0",
     "underscore": "1.2.1",
     "dateformat": "1.0.2-1.2.3"
   }
