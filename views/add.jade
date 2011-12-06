@@ -14,6 +14,11 @@ div(data-role='page', data-theme='a')
           input(type='checkbox', name='person', id='#{person.facebook_id}', value='#{person.facebook_id}')
         label(for='#{person.facebook_id}')= person.name
 
+      label(for='owe_switch') Who owes:
+      select(name='owe_switch', id='owe_switch', data-role='slider')
+        option(value='owed') They owe
+        option(value='owe') You owe
+
       label(for='amount') Amount:
       input(type='number', name='amount', id='amount')
 
@@ -28,7 +33,8 @@ div(data-role='page', data-theme='a')
           person: "required",
           amount: {
             required: true,
-            number: true
+            number: true,
+            min: 1
           },
           comments: "required"
         },
