@@ -7,6 +7,8 @@ div(data-role='page', data-theme='a', data-add-back-btn='true')
   - var valueToCurrentUser = transaction.valueToPerson(currentUser)
 
   div.edit(data-role='content', data-theme='a')
+    p= transaction.comment
+
     p
       mixin balance(valueToCurrentUser)
 
