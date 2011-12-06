@@ -91,7 +91,7 @@ function getPersonOptions(user_facebook_id, callback) {
 app.post('/add', authorize, function(request, response) {
     var createTransactionWithPersonWithFacebookId = function(facebook_id) {
         provider.findPersonByFacebookId(facebook_id, function(person) {
-            var amount = Math.round(request.body.amount * 100)/100;
+            var amount = request.body.amount;
 
             if (request.body.owe_switch === 'owe') {
                 amount *= -1;
@@ -160,8 +160,13 @@ function errorResponse(response, message) {
 // View helpers
 
 app.helpers({
-    dateFormat: dateFormat
+    dateFormat: dateFormat,
+    decimalFormat: decimalFormat
 });
+
+function decimalFormat(number) {
+    return (Math.round(number * 100)/100).toFixed(2);
+}
 
 app.dynamicHelpers({
     currentUser: function(request, response) {

@@ -6,6 +6,6 @@ mixin style(src)
 
 mixin balance(amount)
   - if (amount >= 0)
-    span.balance.owed= '$' + amount
+    span.balance.owed= '$' + decimalFormat(amount)
   - else
-    span.balance.you_owe= amount.toString().replace('-', '-$')
+    span.balance.you_owe= decimalFormat(amount).replace('-', '-$')

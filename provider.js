@@ -92,16 +92,15 @@ PersonSchema.method({
 // Helper functions
 
 function balanceForTransactions(transactions, person) {
-    return Math.round(
-        _(transactions)
-            .chain()
-            .filter(
-            function(transaction) {
-                return !transaction.get('paid');
-            }).reduce(function(sum, transaction) {
-                return sum + transaction.valueToPerson(person);
-            }, 0)
-            .value() * 100)/100;
+    return _(transactions)
+        .chain()
+        .filter(
+        function(transaction) {
+            return !transaction.get('paid');
+        }).reduce(function(sum, transaction) {
+            return sum + transaction.valueToPerson(person);
+        }, 0)
+        .value();
 }
 
 // API
