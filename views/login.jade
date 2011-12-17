@@ -18,7 +18,10 @@ div(data-role='page', data-theme='a')
               xfbml: true
           });
 
-          FB.Event.subscribe('auth.login', function(response) {
-            window.location.reload();
+          FB.login(function(response) {
+            if (response.authResponse) {
+              document.cookie = 'access_token=' + response.authResponse.accessToken;
+              window.location.reload();
+            }
           });
       });

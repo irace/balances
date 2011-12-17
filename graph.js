@@ -20,12 +20,12 @@ FacebookGraph.prototype.getFacebookId = function(request, callback) {
 };
 
 function facebookCookie(request) {
-    return request.cookies['fbs_' + process.env.BALANCES_FACEBOOK_APP_ID];
+    return request.cookies['access_token'];
 }
 
 function getFacebookUser(cookie, callback) {
     // Request a user object from Facebook Open Graph, using the given cookie
-    https.get({ host: 'graph.facebook.com', path: '/me?' + cookie }, function(response) {
+    https.get({ host: 'graph.facebook.com', path: '/me?access_token=' + cookie }, function(response) {
         response.on('data', function(data) {
             callback(JSON.parse(data));
         });
