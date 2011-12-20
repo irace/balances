@@ -13,12 +13,11 @@ div(data-role='page', data-theme='a')
       $(function() {
           FB.init({
               appId: '133133700120767',
-              cookie: true,
               status: true,
               xfbml: true
           });
 
-          FB.login(function(response) {
+          FB.Event.subscribe('auth.login', function(response) {
             if (response.authResponse) {
               document.cookie = 'access_token=' + response.authResponse.accessToken;
               window.location.reload();
