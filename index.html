@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Balances - a simple app for keeping track of money you owe and is owed to you.</title>
+
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: black;
+            background: no-repeat 0 50% -moz-radial-gradient(50% 0%, circle, gray, black);
+            background: no-repeat 0 50% -webkit-gradient(radial, center top, 0, center top, 600, from(gray), to(black));
+            padding-bottom: 50px;
+        }
+
+        .span8 p, .span8 li, #byline {
+            color: lightgray;
+            text-shadow: 0px -1px 1px rgba(0, 0, 0, 0.3);
+            font-size: 1.5em;
+        }
+        
+        .span8 li {
+            line-height: 1.5em;
+        }
+
+        .hero-unit {
+            background-color: #d3d3d3;
+        }
+
+        img {
+            display: block;
+            margin: auto;
+        }
+
+        a:link, a:visited, a:hover, a:active {
+            color: darkgray;
+        }
+
+        #byline {
+            text-align: center;
+        }
+    </style>
+    
+</head>
+<body>
+
+<div class="container">
+    <div class="hero-unit">
+        <h1>Balances</h1>
+        <p>A simple app for keeping track of money you owe and is owed to you.</p>
+    </div>
+
+    <div class="row">
+        <div class="span8">
+            <a href="http://github.com/irace/balances"><img src="iphone.png" /></a>
+        </div>
+
+        <div class="span8">
+            <p>Built using:</p>
+            <ul>
+                <li><a href="http://nodejs.org">Node.js</a></li>
+                <li><a href="http://jquerymobile.com">jQuery Mobile</a></li>
+                <li><a href="http://expressjs.com">Express</a> web framework</li>
+                <li><a href="http://mongodb.org">MongoDB</a></li>
+                <li><a href="http://mongoosejs.com">Mongoose</a> ODM</li>
+                <li><a href="http://jade-lang.com">Jade</a> templating language</li>
+                <li><a href="http://developers.facebook.com">Facebook Open Graph</a> API</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div id="byline">By <a href="http://bryanirace.com">Bryan Irace</a></div>
+</div>
+
+<a href="http://github.com/irace/balances"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/4c7dc970b89fd04b81c8e221ba88ff99a06c6b61/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub"></a>
+
+</body>
+</html>
