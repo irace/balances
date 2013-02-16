@@ -16,11 +16,34 @@ div(data-role='page', data-theme='a')
               status: true,
               xfbml: true
           });
-
+/*
           FB.Event.subscribe('auth.login', function(response) {
             if (response.authResponse) {
               document.cookie = 'access_token=' + response.authResponse.accessToken;
               window.location.reload();
             }
+          });
+          */
+
+          function login() {
+              FB.login(function(response) {
+                  if (response.authResponse) {
+                    document.cookie = 'access_token=' + response.authResponse.accessToken;
+                    window.location.reload();
+                  }
+              });
+          }
+
+          // Additional init code here
+          FB.getLoginStatus(function(response) {
+              if (response.status === 'connected') {
+                  // connected
+              } else if (response.status === 'not_authorized') {
+                  // not_authorized
+                  login();
+              } else {
+                  // not_logged_in
+                  login();
+              }
           });
       });
