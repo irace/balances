@@ -3,12 +3,6 @@ div(data-role='page', data-theme='a')
     h1 Balances
 
   div(data-role='content')
-
-    // TODO: Is there a way to do this without using FBML?
-    // TODO: Use CSS instead
-    center
-      fb:login-button(scope='email') Login with Facebook
-
     script
       $(function() {
           FB.init({
@@ -16,34 +10,23 @@ div(data-role='page', data-theme='a')
               status: true,
               xfbml: true
           });
-/*
-          FB.Event.subscribe('auth.login', function(response) {
-            if (response.authResponse) {
-              document.cookie = 'access_token=' + response.authResponse.accessToken;
-              window.location.reload();
-            }
-          });
-          */
+
+          function authed() {
+            document.cookie = 'access_token=' + response.authResponse.accessToken;
+            window.location.reload();
+          }
 
           function login() {
               FB.login(function(response) {
-                  if (response.authResponse) {
-                    document.cookie = 'access_token=' + response.authResponse.accessToken;
-                    window.location.reload();
-                  }
+                if (response.authResponse)
+                  authed();
               });
           }
 
-          // Additional init code here
           FB.getLoginStatus(function(response) {
-              if (response.status === 'connected') {
-                  // connected
-              } else if (response.status === 'not_authorized') {
-                  // not_authorized
-                  login();
-              } else {
-                  // not_logged_in
-                  login();
-              }
+            if (response.status === 'connected')
+              authed();
+            else
+              login();
           });
       });
