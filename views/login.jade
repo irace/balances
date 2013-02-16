@@ -11,7 +11,7 @@ div(data-role='page', data-theme='a')
               xfbml: true
           });
 
-          function authed() {
+          function authed(response) {
             document.cookie = 'access_token=' + response.authResponse.accessToken;
             window.location.reload();
           }
@@ -19,13 +19,13 @@ div(data-role='page', data-theme='a')
           function login() {
               FB.login(function(response) {
                 if (response.authResponse)
-                  authed();
+                  authed(response);
               });
           }
 
           FB.getLoginStatus(function(response) {
             if (response.status === 'connected')
-              authed();
+              authed(response);
             else
               login();
           });
